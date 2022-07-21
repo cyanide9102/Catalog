@@ -1,7 +1,21 @@
+using Catalog.Core;
+using Catalog.Core.Interfaces;
+using Catalog.Infrastructure.Data;
+using MediatR;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+var connectionString = builder.Configuration.GetConnectionString("DbConnection");
+builder.Services.AddDbContext<AppDbContext>(c => c.UseSqlServer(connectionString));
+
+builder.Services.AddScoped(typeof(IRepository<>), typeof(EfRepository<>));
+builder.Services.AddScoped(typeof(IReadRepository<>), typeof(EfRepository<>));
+
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddMediatR(typeof(MediatorRoot).Assembly);
 
 var app = builder.Build();
 

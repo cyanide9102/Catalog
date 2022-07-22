@@ -15,5 +15,12 @@ namespace Catalog.Core.Entities
         public string? Country { get; private set; }
 
         public ICollection<Book> Books { get; private set; }
+
+        public void Update(string name, string? country = null)
+        {
+            Name = name;
+            Country = country;
+            UpdatedAt = DateTime.UtcNow;
+        }
     }
 }

@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Catalog.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20220722125820_CreateTagEntity")]
-    partial class CreateTagEntity
+    [Migration("20220722204121_CreateCatalogSchema")]
+    partial class CreateCatalogSchema
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -23,51 +23,6 @@ namespace Catalog.Infrastructure.Data.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
-
-            modelBuilder.Entity("AuthorBook", b =>
-                {
-                    b.Property<Guid>("AuthorsId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("BooksId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("AuthorsId", "BooksId");
-
-                    b.HasIndex("BooksId");
-
-                    b.ToTable("AuthorBook");
-                });
-
-            modelBuilder.Entity("BookGenre", b =>
-                {
-                    b.Property<Guid>("BooksId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("GenresId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("BooksId", "GenresId");
-
-                    b.HasIndex("GenresId");
-
-                    b.ToTable("BookGenre");
-                });
-
-            modelBuilder.Entity("BookTag", b =>
-                {
-                    b.Property<Guid>("BooksId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("TagsId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("BooksId", "TagsId");
-
-                    b.HasIndex("TagsId");
-
-                    b.ToTable("BookTag");
-                });
 
             modelBuilder.Entity("Catalog.Core.Entities.Author", b =>
                 {
@@ -88,7 +43,7 @@ namespace Catalog.Infrastructure.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Author");
+                    b.ToTable("Authors");
                 });
 
             modelBuilder.Entity("Catalog.Core.Entities.Book", b =>
@@ -105,8 +60,11 @@ namespace Catalog.Infrastructure.Data.Migrations
                         .HasMaxLength(1024)
                         .HasColumnType("nvarchar(1024)");
 
-                    b.Property<int?>("Pages")
-                        .HasColumnType("int");
+                    b.Property<short?>("Pages")
+                        .HasColumnType("smallint");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("money");
 
                     b.Property<DateTime?>("PublishedOn")
                         .HasColumnType("date");
@@ -126,7 +84,55 @@ namespace Catalog.Infrastructure.Data.Migrations
 
                     b.HasIndex("PublisherId");
 
-                    b.ToTable("Book");
+                    b.ToTable("Books");
+                });
+
+            modelBuilder.Entity("Catalog.Core.Entities.BookAuthor", b =>
+                {
+                    b.Property<Guid>("BookId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("AuthorId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<byte>("Order")
+                        .HasColumnType("tinyint");
+
+                    b.HasKey("BookId", "AuthorId");
+
+                    b.HasIndex("AuthorId");
+
+                    b.ToTable("BookAuthor");
+                });
+
+            modelBuilder.Entity("Catalog.Core.Entities.BookGenre", b =>
+                {
+                    b.Property<Guid>("BookId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("GenreId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("BookId", "GenreId");
+
+                    b.HasIndex("GenreId");
+
+                    b.ToTable("BookGenre");
+                });
+
+            modelBuilder.Entity("Catalog.Core.Entities.BookTag", b =>
+                {
+                    b.Property<Guid>("BookId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("TagId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("BookId", "TagId");
+
+                    b.HasIndex("TagId");
+
+                    b.ToTable("BookTag");
                 });
 
             modelBuilder.Entity("Catalog.Core.Entities.Genre", b =>
@@ -148,7 +154,7 @@ namespace Catalog.Infrastructure.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Genre");
+                    b.ToTable("Genres");
                 });
 
             modelBuilder.Entity("Catalog.Core.Entities.Publisher", b =>
@@ -174,7 +180,7 @@ namespace Catalog.Infrastructure.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Publisher");
+                    b.ToTable("Publishers");
                 });
 
             modelBuilder.Entity("Catalog.Core.Entities.Tag", b =>
@@ -196,52 +202,7 @@ namespace Catalog.Infrastructure.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Tag");
-                });
-
-            modelBuilder.Entity("AuthorBook", b =>
-                {
-                    b.HasOne("Catalog.Core.Entities.Author", null)
-                        .WithMany()
-                        .HasForeignKey("AuthorsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Catalog.Core.Entities.Book", null)
-                        .WithMany()
-                        .HasForeignKey("BooksId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("BookGenre", b =>
-                {
-                    b.HasOne("Catalog.Core.Entities.Book", null)
-                        .WithMany()
-                        .HasForeignKey("BooksId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Catalog.Core.Entities.Genre", null)
-                        .WithMany()
-                        .HasForeignKey("GenresId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("BookTag", b =>
-                {
-                    b.HasOne("Catalog.Core.Entities.Book", null)
-                        .WithMany()
-                        .HasForeignKey("BooksId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Catalog.Core.Entities.Tag", null)
-                        .WithMany()
-                        .HasForeignKey("TagsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.ToTable("Tags");
                 });
 
             modelBuilder.Entity("Catalog.Core.Entities.Book", b =>
@@ -254,9 +215,90 @@ namespace Catalog.Infrastructure.Data.Migrations
                     b.Navigation("Publisher");
                 });
 
+            modelBuilder.Entity("Catalog.Core.Entities.BookAuthor", b =>
+                {
+                    b.HasOne("Catalog.Core.Entities.Author", "Author")
+                        .WithMany("BookLinks")
+                        .HasForeignKey("AuthorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Catalog.Core.Entities.Book", "Book")
+                        .WithMany("AuthorLinks")
+                        .HasForeignKey("BookId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Author");
+
+                    b.Navigation("Book");
+                });
+
+            modelBuilder.Entity("Catalog.Core.Entities.BookGenre", b =>
+                {
+                    b.HasOne("Catalog.Core.Entities.Book", "Book")
+                        .WithMany("GenreLinks")
+                        .HasForeignKey("BookId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Catalog.Core.Entities.Genre", "Genre")
+                        .WithMany("BookLinks")
+                        .HasForeignKey("GenreId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Book");
+
+                    b.Navigation("Genre");
+                });
+
+            modelBuilder.Entity("Catalog.Core.Entities.BookTag", b =>
+                {
+                    b.HasOne("Catalog.Core.Entities.Book", "Book")
+                        .WithMany("TagLinks")
+                        .HasForeignKey("BookId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Catalog.Core.Entities.Tag", "Tag")
+                        .WithMany("BookLinks")
+                        .HasForeignKey("TagId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Book");
+
+                    b.Navigation("Tag");
+                });
+
+            modelBuilder.Entity("Catalog.Core.Entities.Author", b =>
+                {
+                    b.Navigation("BookLinks");
+                });
+
+            modelBuilder.Entity("Catalog.Core.Entities.Book", b =>
+                {
+                    b.Navigation("AuthorLinks");
+
+                    b.Navigation("GenreLinks");
+
+                    b.Navigation("TagLinks");
+                });
+
+            modelBuilder.Entity("Catalog.Core.Entities.Genre", b =>
+                {
+                    b.Navigation("BookLinks");
+                });
+
             modelBuilder.Entity("Catalog.Core.Entities.Publisher", b =>
                 {
                     b.Navigation("Books");
+                });
+
+            modelBuilder.Entity("Catalog.Core.Entities.Tag", b =>
+                {
+                    b.Navigation("BookLinks");
                 });
 #pragma warning restore 612, 618
         }

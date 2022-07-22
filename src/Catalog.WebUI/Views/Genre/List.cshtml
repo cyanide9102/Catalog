@@ -1,0 +1,38 @@
+﻿@model IEnumerable<Catalog.Core.Entities.Genre>
+@{
+    ViewData["Title"] = "Genres";
+}
+
+<div class="mb-3 text-end">
+    <a asp-area="" asp-controller="Genre" asp-action="Create" class="btn btn-success">Create new Genre</a>
+</div>
+
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th scope="col">ID</th>
+                <th scope="col">Name</th>
+                <th scope="col">Created At</th>
+                <th scope="col">Updated At</th>
+                <th scope="col">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var genre in Model)
+            {
+                <tr>
+                    <th scope="row">@genre.Id</th>
+                    <td>@genre.Name</td>
+                    <td>@genre.CreatedAt.ToLocalTime().ToString("dd MMMM, yyyy hh:mm tt")</td>
+                    <td>@genre.UpdatedAt.ToLocalTime().ToString("dd MMMM, yyyy hh:mm tt")</td>
+                    <td>
+                        <a asp-area="" asp-controller="Genre" asp-action="Info" asp-route-id="@genre.Id" class="btn btn-info">View</a>
+                        <a asp-area="" asp-controller="Genre" asp-action="Edit" asp-route-id="@genre.Id" class="btn btn-secondary">Edit</a>
+                        <a asp-area="" asp-controller="Genre" asp-action="Info" asp-route-id="@genre.Id" class="btn btn-danger">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

@@ -7,11 +7,17 @@ namespace Catalog.Core.Entities
         public Genre(string name) : base()
         {
             Name = name;
-            Books = new List<Book>();
+            BookLinks = new HashSet<BookGenre>();
         }
 
         public string Name { get; private set; }
 
-        public ICollection<Book> Books { get; private set; }
+        public ICollection<BookGenre> BookLinks { get; private set; }
+
+        public void Update(string name)
+        {
+            Name = name;
+            UpdatedAt = DateTime.UtcNow;
+        }
     }
 }

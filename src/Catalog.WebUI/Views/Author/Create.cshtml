@@ -1,0 +1,34 @@
+﻿@model Catalog.WebUI.ViewModels.AuthorViewModels.AuthorCreateViewModel
+@{
+    ViewData["Title"] = "Create new Author";
+}
+
+<div class="container mt-3">
+    <div class="row g-0">
+        <div class="col-lg-6 col-md-9 col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row g-0">
+                        <div class="col-12">
+                            <h3 class="h3 fw-bold">@ViewData["Title"]</h3>
+                            <form method="post" mb-3 autocomplete="off">
+                                <div asp-validation-summary="All" class="text-danger"></div>
+                                <div class="mb-3">
+                                    <label asp-for="Name" class="form-label"></label>
+                                    <input asp-for="Name" class="form-control" />
+                                    <span asp-validation-for="Name" class="text-danger"></span>
+                                </div>
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-primary">Submit</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+}

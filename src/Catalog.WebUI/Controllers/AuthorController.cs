@@ -1,4 +1,6 @@
-﻿using Catalog.Core.Queries;
+﻿using Catalog.Core.Commands;
+using Catalog.Core.Queries;
+using Catalog.WebUI.ViewModels.AuthorViewModels;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -6,11 +8,11 @@ using Microsoft.AspNetCore.Mvc;
 namespace Catalog.WebUI.Controllers
 {
     [Authorize]
-    public class BookController : Controller
+    public class AuthorController : Controller
     {
         private readonly IMediator _mediator;
 
-        public BookController(IMediator mediator)
+        public AuthorController(IMediator mediator)
         {
             _mediator = mediator;
         }
@@ -18,11 +20,10 @@ namespace Catalog.WebUI.Controllers
         [HttpGet]
         public async Task<IActionResult> List()
         {
-            var books = await _mediator.Send(new GetBooksQuery());
-            return View(books);
+            var authors = await _mediator.Send(new GetAuthorsQuery());
+            return View(authors);
         }
 
-        /*
         [HttpGet("[controller]/[action]/{id}")]
         public async Task<IActionResult> Info(Guid id)
         {
@@ -74,6 +75,5 @@ namespace Catalog.WebUI.Controllers
             var author = await _mediator.Send(new EditAuthorCommand(viewModel.Id, viewModel.Name));
             return RedirectToAction(nameof(Info), new { author.Id });
         }
-        */
     }
 }

@@ -1,0 +1,38 @@
+﻿@model IEnumerable<Catalog.Core.Entities.Author>
+@{
+    ViewData["Title"] = "Authors";
+}
+
+<div class="mb-3 text-end">
+    <a asp-area="" asp-controller="Author" asp-action="Create" class="btn btn-success">Create new Author</a>
+</div>
+
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th scope="col">ID</th>
+                <th scope="col">Name</th>
+                <th scope="col">Created At</th>
+                <th scope="col">Updated At</th>
+                <th scope="col">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var author in Model)
+            {
+                <tr>
+                    <th scope="row">@author.Id</th>
+                    <td>@author.Name</td>
+                    <td>@author.CreatedAt.ToLocalTime().ToString("dd MMMM, yyyy hh:mm tt")</td>
+                    <td>@author.UpdatedAt.ToLocalTime().ToString("dd MMMM, yyyy hh:mm tt")</td>
+                    <td>
+                        <a asp-area="" asp-controller="Author" asp-action="Info" asp-route-id="@author.Id" class="btn btn-info">View</a>
+                        <a asp-area="" asp-controller="Author" asp-action="Edit" asp-route-id="@author.Id" class="btn btn-secondary">Edit</a>
+                        <a asp-area="" asp-controller="Author" asp-action="Info" asp-route-id="@author.Id" class="btn btn-danger">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

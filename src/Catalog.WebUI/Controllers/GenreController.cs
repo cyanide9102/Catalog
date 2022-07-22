@@ -1,4 +1,6 @@
-﻿using Catalog.Core.Queries;
+﻿using Catalog.Core.Commands;
+using Catalog.Core.Queries;
+using Catalog.WebUI.ViewModels.GenreViewModels;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -6,11 +8,11 @@ using Microsoft.AspNetCore.Mvc;
 namespace Catalog.WebUI.Controllers
 {
     [Authorize]
-    public class BookController : Controller
+    public class GenreController : Controller
     {
         private readonly IMediator _mediator;
 
-        public BookController(IMediator mediator)
+        public GenreController(IMediator mediator)
         {
             _mediator = mediator;
         }
@@ -18,16 +20,15 @@ namespace Catalog.WebUI.Controllers
         [HttpGet]
         public async Task<IActionResult> List()
         {
-            var books = await _mediator.Send(new GetBooksQuery());
-            return View(books);
+            var genres = await _mediator.Send(new GetGenresQuery());
+            return View(genres);
         }
 
-        /*
         [HttpGet("[controller]/[action]/{id}")]
         public async Task<IActionResult> Info(Guid id)
         {
-            var author = await _mediator.Send(new GetAuthorByIdQuery(id));
-            return View(author);
+            var genre = await _mediator.Send(new GetGenreByIdQuery(id));
+            return View(genre);
         }
 
         [HttpGet]
@@ -38,25 +39,25 @@ namespace Catalog.WebUI.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([FromForm] AuthorCreateViewModel viewModel)
+        public async Task<IActionResult> Create([FromForm] GenreCreateViewModel viewModel)
         {
             if (!ModelState.IsValid)
             {
                 return View(viewModel);
             }
 
-            var author = await _mediator.Send(new CreateAuthorCommand(viewModel.Name));
-            return RedirectToAction(nameof(Info), new { author.Id });
+            var genre = await _mediator.Send(new CreateGenreCommand(viewModel.Name));
+            return RedirectToAction(nameof(Info), new { genre.Id });
         }
 
         [HttpGet("[controller]/[action]/{id}")]
         public async Task<IActionResult> Edit(Guid id)
         {
-            var author = await _mediator.Send(new GetAuthorByIdQuery(id));
-            var viewModel = new AuthorEditViewModel()
+            var genre = await _mediator.Send(new GetGenreByIdQuery(id));
+            var viewModel = new GenreEditViewModel()
             {
-                Id = author.Id,
-                Name = author.Name,
+                Id = genre.Id,
+                Name = genre.Name,
             };
 
             return View(viewModel);
@@ -64,16 +65,15 @@ namespace Catalog.WebUI.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit([FromForm] AuthorEditViewModel viewModel)
+        public async Task<IActionResult> Edit([FromForm] GenreEditViewModel viewModel)
         {
             if (!ModelState.IsValid)
             {
                 return View(viewModel);
             }
 
-            var author = await _mediator.Send(new EditAuthorCommand(viewModel.Id, viewModel.Name));
-            return RedirectToAction(nameof(Info), new { author.Id });
+            var genre = await _mediator.Send(new EditGenreCommand(viewModel.Id, viewModel.Name));
+            return RedirectToAction(nameof(Info), new { genre.Id });
         }
-        */
     }
 }

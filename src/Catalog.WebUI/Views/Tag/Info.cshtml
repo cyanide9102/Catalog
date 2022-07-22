@@ -1,0 +1,26 @@
+﻿@model Catalog.Core.Entities.Tag
+@{
+    ViewData["Title"] = $"Tag: {Model.Name}";
+}
+
+<div class="card">
+    <div class="card-body">
+        <h5 class="card-title">@ViewData["Title"]</h5>
+        <dl class="row">
+            <dt class="col-sm-3">ID</dt>
+            <dd class="col-sm-9">@Model.Id</dd>
+
+            <dt class="col-sm-3">Name</dt>
+            <dd class="col-sm-9">@Model.Name</dd>
+
+            <dt class="col-sm-3">Number of Books</dt>
+            <dd class="col-sm-9">
+                <p class="m-0 p-0">@Model.BookLinks.Count</p>
+                @if (Model.BookLinks.Any())
+                {
+                    <p class="m-0 p-0"><a asp-area="" asp-controller="Book" asp-action="List" class="link-info text-dark text-decoration-none">View booklist</a></p>
+                }
+            </dd>
+        </dl>
+    </div>
+</div>

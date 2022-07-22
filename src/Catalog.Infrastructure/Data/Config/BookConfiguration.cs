@@ -10,6 +10,7 @@ namespace Catalog.Infrastructure.Data.Config
         {
             builder.Property(b => b.Title).IsRequired().HasMaxLength(256);
             builder.Property(b => b.Description).HasMaxLength(1024);
+            builder.Property(b => b.Price).IsRequired().HasColumnType("money");
             builder.Property(b => b.PublishedOn).HasColumnType("date");
 
             builder.HasOne(b => b.Publisher)

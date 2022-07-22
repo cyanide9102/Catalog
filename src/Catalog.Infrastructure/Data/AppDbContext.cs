@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Catalog.Core.Entities;
+using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 
 namespace Catalog.Infrastructure.Data
@@ -8,6 +9,12 @@ namespace Catalog.Infrastructure.Data
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
         }
+
+        public DbSet<Author> Authors => Set<Author>();
+        public DbSet<Book> Books => Set<Book>();
+        public DbSet<Genre> Genres => Set<Genre>();
+        public DbSet<Publisher> Publishers => Set<Publisher>();
+        public DbSet<Tag> Tags => Set<Tag>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

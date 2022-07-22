@@ -10,8 +10,8 @@ namespace Catalog.Core.Entities
             Books = new List<Book>();
         }
 
-        public string Name { get; set; }
+        public string Name { get; private set; }
 
-        public ICollection<Book> Books { get; set; }
+        public ICollection<Book> Books { get; private set; }
     }
 }

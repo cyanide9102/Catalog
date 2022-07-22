@@ -12,18 +12,20 @@ namespace Catalog.Core.Entities
             PublishedOn = publishedOn;
             PublisherId = publisherId;
             Genres = new HashSet<Genre>();
+            Tags = new HashSet<Tag>();
             Authors = new HashSet<Author>();
         }
 
-        public string Title { get; set; }
-        public string Description { get; set; }
-        public int? Pages { get; set; }
-        public DateTime? PublishedOn { get; set; }
+        public string Title { get; private set; }
+        public string Description { get; private set; }
+        public int? Pages { get; private set; }
+        public DateTime? PublishedOn { get; private set; }
 
-        public Guid? PublisherId { get; set; }
-        public Publisher? Publisher { get; set; }
+        public Guid? PublisherId { get; private set; }
+        public Publisher? Publisher { get; private set; }
 
-        public ICollection<Genre> Genres { get; set; }
-        public ICollection<Author> Authors { get; set; }
+        public ICollection<Genre> Genres { get; private set; }
+        public ICollection<Tag> Tags { get; private set; }
+        public ICollection<Author> Authors { get; private set; }
     }
 }

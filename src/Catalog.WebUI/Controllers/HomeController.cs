@@ -1,6 +1,6 @@
-﻿using System.Diagnostics;
+﻿using Catalog.WebUI.ViewModels;
 using Microsoft.AspNetCore.Mvc;
-using Catalog.WebUI.Models;
+using System.Diagnostics;
 
 namespace Catalog.WebUI.Controllers;
 

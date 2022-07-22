@@ -27,9 +27,9 @@
                     <td>@tag.CreatedAt.ToLocalTime().ToString("dd MMMM, yyyy hh:mm tt")</td>
                     <td>@tag.UpdatedAt.ToLocalTime().ToString("dd MMMM, yyyy hh:mm tt")</td>
                     <td>
-                        <a asp-area="" asp-controller="Tag" asp-action="Info" asp-route-id="@tag.Id" class="btn btn-info">View</a>
-                        <a asp-area="" asp-controller="Tag" asp-action="Edit" asp-route-id="@tag.Id" class="btn btn-secondary">Edit</a>
-                        <a asp-area="" asp-controller="Tag" asp-action="Info" asp-route-id="@tag.Id" class="btn btn-danger">Delete</a>
+                        <a asp-area="" asp-controller="Tag" asp-action="Info" asp-route-id="@tag.Id" class="btn btn-sm btn-info">View</a>
+                        <a asp-area="" asp-controller="Tag" asp-action="Edit" asp-route-id="@tag.Id" class="btn btn-sm btn-secondary">Edit</a>
+                        <a asp-area="" asp-controller="Tag" asp-action="Info" asp-route-id="@tag.Id" class="btn btn-sm btn-danger">Delete</a>
                     </td>
                 </tr>
             }

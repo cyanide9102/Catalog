@@ -27,9 +27,9 @@
                     <td>@author.CreatedAt.ToLocalTime().ToString("dd MMMM, yyyy hh:mm tt")</td>
                     <td>@author.UpdatedAt.ToLocalTime().ToString("dd MMMM, yyyy hh:mm tt")</td>
                     <td>
-                        <a asp-area="" asp-controller="Author" asp-action="Info" asp-route-id="@author.Id" class="btn btn-info">View</a>
-                        <a asp-area="" asp-controller="Author" asp-action="Edit" asp-route-id="@author.Id" class="btn btn-secondary">Edit</a>
-                        <a asp-area="" asp-controller="Author" asp-action="Info" asp-route-id="@author.Id" class="btn btn-danger">Delete</a>
+                        <a asp-area="" asp-controller="Author" asp-action="Info" asp-route-id="@author.Id" class="btn btn-sm btn-info">View</a>
+                        <a asp-area="" asp-controller="Author" asp-action="Edit" asp-route-id="@author.Id" class="btn btn-sm btn-secondary">Edit</a>
+                        <a asp-area="" asp-controller="Author" asp-action="Info" asp-route-id="@author.Id" class="btn btn-sm btn-danger">Delete</a>
                     </td>
                 </tr>
             }

@@ -5,6 +5,10 @@
     {
       "library": "datatables.net-bs5@1.12.1",
       "destination": "wwwroot/lib/datatables.net-bs5/"
+    },
+    {
+      "library": "datatables.net@1.12.1",
+      "destination": "wwwroot/lib/datatables.net/"
     }
   ]
 }

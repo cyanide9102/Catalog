@@ -1,6 +1,7 @@
 using Catalog.Core;
 using Catalog.Core.Interfaces;
 using Catalog.Infrastructure.Data;
+using Catalog.Infrastructure.Data.Queries;
 using Catalog.Infrastructure.Identity;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -65,6 +66,7 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFramework
 
 builder.Services.AddScoped(typeof(IRepository<>), typeof(EfRepository<>));
 builder.Services.AddScoped(typeof(IReadRepository<>), typeof(EfRepository<>));
+builder.Services.AddScoped(typeof(IBookQueryService), typeof(BookQueryService));
 
 builder.Services.AddControllersWithViews();
 

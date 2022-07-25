@@ -1,0 +1,34 @@
+﻿@{
+    ViewData["Title"] = "Books";
+}
+
+<div class="mb-3 text-end">
+    <a asp-area="" asp-controller="Book" asp-action="Create" class="btn btn-success">Create new Book</a>
+</div>
+
+<div class="table-responsive">
+    <table id="booksTable" class="table table-sm table-striped">
+        <thead>
+            <tr>
+                <th scope="col">Title</th>
+                <th scope="col">Price</th>
+                <th scope="col">Author(s)</th>
+                <th scope="col">Published By</th>
+                <th scope="col">Published On</th>
+                <th scope="col">Created At</th>
+                <th scope="col">Updated At</th>
+                <th scope="col">Actions</th>
+            </tr>
+        </thead>
+    </table>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/lib/datatables.net-bs5/dataTables.bootstrap5.min.css" />
+}
+
+@section Scripts {
+    <script src="~/lib/datatables.net/jquery.dataTables.min.js"></script>
+    <script src="~/lib/datatables.net-bs5/dataTables.bootstrap5.min.js"></script>
+    <script src="~/js/Book/Index.js" asp-append-version="true"></script>
+}

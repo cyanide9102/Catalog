@@ -1,4 +1,5 @@
 ﻿using Catalog.Core.Commands;
+using Catalog.Core.Interfaces;
 using Catalog.Core.Queries;
 using Catalog.WebUI.ViewModels.BookViewModels;
 using MediatR;
@@ -15,6 +16,25 @@ namespace Catalog.WebUI.Controllers
         public BookController(IMediator mediator)
         {
             _mediator = mediator;
+        }
+        [HttpPost]
+        public async Task<JsonResult> GetBookList([FromServices] IBookQueryService bookQueryService)
+        {
+            var draw = Request.Form["draw"].FirstOrDefault();
+            var searchTerm = Request.Form["search[value]"].FirstOrDefault();
+            var sortColumn = Request.Form["columns[" + Request.Form["order[0][column]"].FirstOrDefault() + "][name]"].FirstOrDefault();
+            var sortColumnDirection = Request.Form["order[0][dir]"].FirstOrDefault();
+            int skip = Convert.ToInt32(Request.Form["start"].FirstOrDefault() ?? "0");
+            int pageSize = Convert.ToInt32(Request.Form["length"].FirstOrDefault() ?? "-1");
+
+            var data = await bookQueryService.GetBookList(Convert.ToInt32(draw), searchTerm, sortColumn, sortColumnDirection, skip, pageSize);
+            return Json(data);
+        }
+
+        [HttpGet]
+        public IActionResult Index()
+        {
+            return View();
         }
 
         [HttpGet]

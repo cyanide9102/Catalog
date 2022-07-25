@@ -46,5 +46,23 @@ namespace Catalog.Core.Entities
             Publisher = publisher;
             UpdatedAt = DateTime.UtcNow;
         }
+
+        public void UpdateAuthorLinks(HashSet<BookAuthor> authorLinks)
+        {
+            AuthorLinks = authorLinks;
+            UpdatedAt = DateTime.UtcNow;
+        }
+
+        public void UpdateGenreLinks(HashSet<BookGenre> genreLinks)
+        {
+            GenreLinks = genreLinks;
+            UpdatedAt = DateTime.UtcNow;
+        }
+
+        public void UpdateTagLinks(HashSet<BookTag> tagLinks)
+        {
+            TagLinks = tagLinks;
+            UpdatedAt = DateTime.UtcNow;
+        }
     }
 }

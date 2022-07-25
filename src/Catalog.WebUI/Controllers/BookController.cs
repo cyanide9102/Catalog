@@ -1,4 +1,6 @@
-﻿using Catalog.Core.Queries;
+﻿using Catalog.Core.Commands;
+using Catalog.Core.Queries;
+using Catalog.WebUI.ViewModels.BookViewModels;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -22,58 +24,79 @@ namespace Catalog.WebUI.Controllers
             return View(books);
         }
 
-        /*
         [HttpGet("[controller]/[action]/{id}")]
         public async Task<IActionResult> Info(Guid id)
         {
-            var author = await _mediator.Send(new GetAuthorByIdQuery(id));
-            return View(author);
+            var book = await _mediator.Send(new GetBookByIdQuery(id));
+            return View(book);
         }
 
         [HttpGet]
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            return View();
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([FromForm] AuthorCreateViewModel viewModel)
-        {
-            if (!ModelState.IsValid)
+            var viewModel = new BookCreateViewModel()
             {
-                return View(viewModel);
-            }
-
-            var author = await _mediator.Send(new CreateAuthorCommand(viewModel.Name));
-            return RedirectToAction(nameof(Info), new { author.Id });
-        }
-
-        [HttpGet("[controller]/[action]/{id}")]
-        public async Task<IActionResult> Edit(Guid id)
-        {
-            var author = await _mediator.Send(new GetAuthorByIdQuery(id));
-            var viewModel = new AuthorEditViewModel()
-            {
-                Id = author.Id,
-                Name = author.Name,
+                Authors = await _mediator.Send(new GetAuthorsQuery()),
+                Publishers = await _mediator.Send(new GetPublishersQuery()),
+                Genres = await _mediator.Send(new GetGenresQuery()),
+                Tags = await _mediator.Send(new GetTagsQuery())
             };
-
             return View(viewModel);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit([FromForm] AuthorEditViewModel viewModel)
+        public async Task<IActionResult> Create([FromForm] BookCreateViewModel viewModel)
         {
             if (!ModelState.IsValid)
             {
+                viewModel.Authors = await _mediator.Send(new GetAuthorsQuery());
+                viewModel.Publishers = await _mediator.Send(new GetPublishersQuery());
+                viewModel.Genres = await _mediator.Send(new GetGenresQuery());
+                viewModel.Tags = await _mediator.Send(new GetTagsQuery());
                 return View(viewModel);
             }
 
-            var author = await _mediator.Send(new EditAuthorCommand(viewModel.Id, viewModel.Name));
-            return RedirectToAction(nameof(Info), new { author.Id });
+            var publisher = viewModel.PublisherId != Guid.Empty ? await _mediator.Send(new GetPublisherByIdQuery(viewModel.PublisherId)) : null;
+            var authors = await _mediator.Send(new GetAuthorsByIdsQuery(viewModel.AuthorIds));
+            var genres = await _mediator.Send(new GetGenresByIdsQuery(viewModel.GenreIds));
+            var tags = await _mediator.Send(new GetTagsByIdsQuery(viewModel.TagIds));
+
+            var book = await _mediator.Send(new CreateBookCommand(viewModel.Title, viewModel.Description, viewModel.Price, viewModel.Pages, viewModel.PublishedOn, publisher, authors, genres, tags));
+            return RedirectToAction(nameof(Info), new { book.Id });
         }
-        */
+
+        [HttpGet("[controller]/[action]/{id}")]
+        public async Task<IActionResult> Edit(Guid id)
+        {
+            var viewModel = new BookEditViewModel()
+            {
+                Id = id,
+                Authors = await _mediator.Send(new GetAuthorsQuery()),
+                Publishers = await _mediator.Send(new GetPublishersQuery()),
+                Genres = await _mediator.Send(new GetGenresQuery()),
+                Tags = await _mediator.Send(new GetTagsQuery())
+            };
+            return View(viewModel);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit([FromForm] BookEditViewModel viewModel)
+        {
+            if (!ModelState.IsValid)
+            {
+                viewModel.Authors = await _mediator.Send(new GetAuthorsQuery());
+                viewModel.Publishers = await _mediator.Send(new GetPublishersQuery());
+                viewModel.Genres = await _mediator.Send(new GetGenresQuery());
+                viewModel.Tags = await _mediator.Send(new GetTagsQuery());
+                return View(viewModel);
+            }
+
+            // TODO: Implement
+            //var author = await _mediator.Send(new EditAuthorCommand(viewModel.Id, viewModel.Name));
+            //return RedirectToAction(nameof(Info), new { author.Id });
+            return View(viewModel);
+        }
     }
 }

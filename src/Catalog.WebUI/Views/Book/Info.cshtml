@@ -1,0 +1,79 @@
+﻿@model Catalog.Core.Entities.Book
+@{
+    ViewData["Title"] = $"Book: {Model.Title}";
+}
+
+<div class="card">
+    <div class="card-body">
+        <h5 class="card-title">@ViewData["Title"]</h5>
+        <dl class="row">
+            <dt class="col-sm-3">ID</dt>
+            <dd class="col-sm-9">@Model.Id</dd>
+
+            <dt class="col-sm-3">Title</dt>
+            <dd class="col-sm-9">@Model.Title</dd>
+
+            <dt class="col-sm-3">Description</dt>
+            <dd class="col-sm-9">@Model.Description</dd>
+
+            <dt class="col-sm-3">Published On</dt>
+            <dd class="col-sm-9">@(Model.PublishedOn.HasValue ? Model.PublishedOn.Value.ToLocalTime().ToString("dd MMMM, yyyy") : "")</dd>
+
+            <dt class="col-sm-3">Published By</dt>
+            <dd class="col-sm-9">
+                @if (Model.Publisher != null)
+                {
+                    <p class="m-0 p-0">
+                        <a asp-area="" asp-controller="Publisher" asp-action="Info" asp-route-id="@Model.Publisher.Id" class="text-dark text-decoration-none">@Model.Publisher.Name</a>
+                    </p>
+                }
+                else
+                {
+                    <p class="m-0 p-0">Unknown</p>
+                }
+            </dd>
+
+            <dt class="col-sm-3">Author(s)</dt>
+            <dd class="col-sm-9">
+                <p class="m-0 p-0">
+                    @foreach (var item in Model.AuthorLinks.Select((value, i) => new { link = value, index = i }))
+                    {
+                        <a asp-area="" asp-controller="Author" asp-action="Info" asp-route-id="@item.link.Author.Id" class="text-dark text-decoration-none">@item.link.Author.Name</a>
+                        if (item.index != (Model.AuthorLinks.Count() - 1))
+                        {
+                            <span>,</span>
+                        }
+                    }
+                </p>
+            </dd>
+
+            <dt class="col-sm-3">Genre(s)</dt>
+            <dd class="col-sm-9">
+                <p class="m-0 p-0">
+                    @foreach (var item in Model.GenreLinks.Select((value, i) => new { link = value, index = i }))
+                    {
+                        <a asp-area="" asp-controller="Genre" asp-action="Info" asp-route-id="@item.link.Genre.Id" class="text-dark text-decoration-none">@item.link.Genre.Name</a>
+                        if (item.index != (Model.GenreLinks.Count() - 1))
+                        {
+                            <span>, </span>
+                        }
+                    }
+                </p>
+            </dd>
+
+            <dt class="col-sm-3">Tag(s)</dt>
+            <dd class="col-sm-9">
+                <p class="m-0 p-0">
+                    @foreach (var item in Model.TagLinks.Select((value, i) => new { link = value, index = i }))
+                    {
+                        <a asp-area="" asp-controller="Tag" asp-action="Info" asp-route-id="@item.link.Tag.Id" class="text-dark text-decoration-none">@item.link.Tag.Name</a>
+                        if (item.index != (Model.TagLinks.Count() - 1))
+                        {
+                            <span>, </span>
+                        }
+                    }
+                </p>
+            </dd>
+        </dl>
+    </div>
+</div>

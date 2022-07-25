@@ -5,9 +5,12 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Catalog.WebUI.ViewModels.BookViewModels
 {
-    public class BookCreateViewModel
+    public class BookEditViewModel
     {
         private const string STRING_LENGHT_ERROR_MESSAGE = "{0} must have characters between {2} and {1}.";
+
+        [Required]
+        public Guid Id { get; set; }
 
         [Required]
         [StringLength(256, MinimumLength = 8, ErrorMessage = STRING_LENGHT_ERROR_MESSAGE)]

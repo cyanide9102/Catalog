@@ -1,0 +1,99 @@
+﻿@model Catalog.WebUI.ViewModels.BookViewModels.BookEditViewModel
+@{
+    ViewData["Title"] = "Edit Book";
+}
+
+<div class="container mt-3">
+    <div class="row g-0">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h3 class="h3 fw-bold">@ViewData["Title"]</h3>
+                    <form method="post" mb-3 autocomplete="off">
+                        <div class="row">
+                            <div class="col-12">
+                                <div asp-validation-summary="All" class="text-danger"></div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 col-12">
+                                <div class="mb-3">
+                                    <label asp-for="Title" class="form-label"></label>
+                                    <input asp-for="Title" class="form-control" />
+                                    <span asp-validation-for="Title" class="text-danger"></span>
+                                </div>
+                                <div class="mb-3">
+                                    <label asp-for="Description" class="form-label"></label>
+                                    <textarea asp-for="Description" class="form-control"></textarea>
+                                    <span asp-validation-for="Description" class="text-danger"></span>
+                                </div>
+                                <div class="mb-3">
+                                    <label asp-for="Price" class="form-label"></label>
+                                    <input asp-for="Price" class="form-control" />
+                                    <span asp-validation-for="Price" class="text-danger"></span>
+                                </div>
+                                <div class="mb-3">
+                                    <label asp-for="Pages" class="form-label"></label>
+                                    <input asp-for="Pages" class="form-control" />
+                                </div>
+                                <div class="mb-3">
+                                    <label for="PublishedOn" class="form-label">Published On</label>
+                                    <input type="date" name="PublishedOn" id="PublishedOn" class="form-control" />
+                                </div>
+                                <div class="mb-3">
+                                    <label for="PublisherId" class="form-label">Publisher</label>
+                                    <select id="PublisherId" name="PublisherId" class="form-select">
+                                        <option value="@Guid.Empty" selected>Unknown</option>
+                                        @foreach (var publisher in Model.Publishers)
+                                        {
+                                            <option value="@publisher.Id">@publisher.Name</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-12">
+                                <div class="mb-3">
+                                    <label for="AuthorIds">Authors</label>
+                                    <select id="AuthorIds" name="AuthorIds" class="form-select" size="5" multiple>
+                                        @foreach (var author in Model.Authors)
+                                        {
+                                            <option value="@author.Id">@author.Name</option>
+                                        }
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="GenreIds">Genres</label>
+                                    <select id="GenreIds" name="GenreIds" class="form-select" size="5" multiple>
+                                        @foreach (var genre in Model.Genres)
+                                        {
+                                            <option value="@genre.Id">@genre.Name</option>
+                                        }
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="TagIds">Tags</label>
+                                    <select id="TagIds" name="TagIds" class="form-select" size="5" multiple>
+                                        @foreach (var tag in Model.Tags)
+                                        {
+                                            <option value="@tag.Id">@tag.Name</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-primary float-end">Submit</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+}

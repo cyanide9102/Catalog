@@ -1,4 +1,5 @@
-﻿using Catalog.Core.Extensions;
+﻿using Catalog.Core.Entities;
+using Catalog.Core.Extensions;
 using Catalog.Core.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -7,33 +8,67 @@ namespace Catalog.Infrastructure.Data.Queries
     public class BookQueryService : IBookQueryService
     {
         private readonly AppDbContext _ctx;
+        private IQueryable<Book> Books;
 
         public BookQueryService(AppDbContext ctx)
         {
             _ctx = ctx;
+
+            Books = _ctx.Books.AsQueryable();
         }
 
-        public async Task<object> GetBookList(int draw, string? searchTerm = "", string? sortColumn = "", string? sortColumnDirection = "", int skip = 0, int pageSize = -1)
+        public async Task<int> GetTotalBooksCountAsync()
         {
-            var books = _ctx.Books.AsQueryable();
+            return await Books.CountAsync();
+        }
 
-            int recordsTotal = books.Count();
+        public async Task<int> GetFilteredBooksCountAsync(string searchValue)
+        {
+            ApplySearchFilter(searchValue);
+            return await Books.CountAsync();
+        }
 
-            if (!string.IsNullOrEmpty(searchTerm))
+        public async Task<IEnumerable<Book>> GetBooksPaginatedAsync(string sortColumn, string sortDirection, int start, int length)
+        {
+            ApplySorting(sortColumn, sortDirection);
+            ApplyPagination(start, length);
+            IncludeRelatedEntites();
+
+            var books = await Books.ToListAsync();
+            return books;
+        }
+
+        private void ApplySearchFilter(string value)
+        {
+            if (!string.IsNullOrEmpty(value))
             {
-                books = books.Where(x => x.Title.ToLower().Contains(searchTerm.ToLower()) || x.Description.ToLower().Contains(searchTerm.ToLower()) || x.Price.ToString().ToLower().Contains(searchTerm.ToLower()));
+                value = value.ToLower();
+                Books = Books.Where(x => x.Title.ToLower().Contains(value) || x.AuthorLinks.Any(l => l.Author.Name.ToLower().Contains(value)) || x.GenreLinks.Any(l => l.Genre.Name.ToLower().Contains(value)) || x.Publisher != null && x.Publisher.Name.Contains(value) || x.Price.ToString().ToLower().Contains(value));
             }
+        }
 
-            int recordsFiltered = books.Count();
-
-            if (!string.IsNullOrEmpty(sortColumn) && !string.IsNullOrEmpty(sortColumnDirection))
+        private void ApplySorting(string column, string direction)
+        {
+            if (!string.IsNullOrEmpty(column) && !string.IsNullOrEmpty(direction))
             {
-                books = books.OrderBy(sortColumn, sortColumnDirection);
+                Books = Books.OrderBy(column, direction);
             }
+        }
 
-            var data = await books.Skip(skip).Take(pageSize).ToListAsync();
-            var returnObj = new { draw, recordsTotal, recordsFiltered, data };
-            return returnObj;
+        private void ApplyPagination(int skip, int take)
+        {
+            Books = Books.Skip(skip).Take(take);
+        }
+
+        private void IncludeRelatedEntites()
+        {
+            Books = Books.Include(b => b.Publisher)
+                         .Include(b => b.AuthorLinks)
+                         .ThenInclude(l => l.Author)
+                         .Include(b => b.GenreLinks)
+                         .ThenInclude(l => l.Genre)
+                         .Include(b => b.TagLinks)
+                         .ThenInclude(l => l.Tag);
         }
     }
 }

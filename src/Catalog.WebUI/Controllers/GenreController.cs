@@ -1,5 +1,8 @@
 ﻿using Catalog.Core.Commands;
+using Catalog.Core.Entities;
+using Catalog.Core.Interfaces;
 using Catalog.Core.Queries;
+using Catalog.WebUI.ViewModels;
 using Catalog.WebUI.ViewModels.GenreViewModels;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -15,6 +18,45 @@ namespace Catalog.WebUI.Controllers
         public GenreController(IMediator mediator)
         {
             _mediator = mediator;
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> GetGenreList([FromForm] DtRequest dt, [FromServices] IGenreQueryService genreQueryService)
+        {
+            try
+            {
+                int recordsTotal = await genreQueryService.GetTotalGenresCountAsync();
+                int recordsFiltered = await genreQueryService.GetFilteredGenresCountAsync(dt.Search.Value);
+                var genres = await genreQueryService.GetGenresPaginatedAsync(dt.Columns[dt.Order[0].Column].Name, dt.Order[0].Dir, dt.Start, dt.Length);
+
+                var result = new DtResponse<Genre>()
+                {
+                    Draw = dt.Draw,
+                    RecordsTotal = recordsTotal,
+                    RecordsFiltered = recordsFiltered,
+                    Data = genres,
+                    Error = ""
+                };
+                return Json(result);
+            }
+            catch (Exception e)
+            {
+                var result = new DtResponse<Genre>()
+                {
+                    Draw = dt.Draw,
+                    RecordsTotal = 0,
+                    RecordsFiltered = 0,
+                    Data = null,
+                    Error = e.InnerException != null ? e.InnerException.Message : e.Message
+                };
+                return Json(result);
+            }
+        }
+
+        [HttpGet]
+        public IActionResult Index()
+        {
+            return View();
         }
 
         [HttpGet]

@@ -38,12 +38,12 @@
                                 </div>
                                 <div class="mb-3">
                                     <label for="PublishedOn" class="form-label">Published On</label>
-                                    <input type="date" name="PublishedOn" id="PublishedOn" class="form-control" />
+                                    <input type="date" name="PublishedOn" id="PublishedOn" value="@(Model.PublishedOn.HasValue ? Model.PublishedOn.Value.ToString("yyyy-MM-dd") : "")" class="form-control" />
                                 </div>
                                 <div class="mb-3">
-                                    <label for="PublisherId" class="form-label">Publisher</label>
-                                    <select id="PublisherId" name="PublisherId" class="form-select">
-                                        <option value="@Guid.Empty" selected>Unknown</option>
+                                    <label asp-for="PublisherId" class="form-label">Publisher</label>
+                                    <select asp-for="PublisherId" class="form-select">
+                                        <option value="@Guid.Empty">Unknown</option>
                                         @foreach (var publisher in Model.Publishers)
                                         {
                                             <option value="@publisher.Id">@publisher.Name</option>
@@ -53,8 +53,8 @@
                             </div>
                             <div class="col-md-6 col-12">
                                 <div class="mb-3">
-                                    <label for="AuthorIds">Authors</label>
-                                    <select id="AuthorIds" name="AuthorIds" class="form-select" size="5" multiple>
+                                    <label asp-for="AuthorIds">Authors</label>
+                                    <select asp-for="AuthorIds" class="form-select" size="5" multiple>
                                         @foreach (var author in Model.Authors)
                                         {
                                             <option value="@author.Id">@author.Name</option>
@@ -62,8 +62,8 @@
                                     </select>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="GenreIds">Genres</label>
-                                    <select id="GenreIds" name="GenreIds" class="form-select" size="5" multiple>
+                                    <label asp-for="GenreIds">Genres</label>
+                                    <select asp-for="GenreIds" class="form-select" size="5" multiple>
                                         @foreach (var genre in Model.Genres)
                                         {
                                             <option value="@genre.Id">@genre.Name</option>
@@ -71,8 +71,8 @@
                                     </select>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="TagIds">Tags</label>
-                                    <select id="TagIds" name="TagIds" class="form-select" size="5" multiple>
+                                    <label asp-for="TagIds">Tags</label>
+                                    <select asp-for="TagIds" class="form-select" size="5" multiple>
                                         @foreach (var tag in Model.Tags)
                                         {
                                             <option value="@tag.Id">@tag.Name</option>

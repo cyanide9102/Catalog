@@ -1,5 +1,8 @@
 ﻿using Catalog.Core.Commands;
+using Catalog.Core.Entities;
+using Catalog.Core.Interfaces;
 using Catalog.Core.Queries;
+using Catalog.WebUI.ViewModels;
 using Catalog.WebUI.ViewModels.PublisherViewModels;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -15,6 +18,45 @@ namespace Catalog.WebUI.Controllers
         public PublisherController(IMediator mediator)
         {
             _mediator = mediator;
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> GetPublisherList([FromForm] DtRequest dt, [FromServices] IPublisherQueryService publisherQueryService)
+        {
+            try
+            {
+                int recordsTotal = await publisherQueryService.GetTotalPublishersCountAsync();
+                int recordsFiltered = await publisherQueryService.GetFilteredPublishersCountAsync(dt.Search.Value);
+                var publishers = await publisherQueryService.GetPublishersPaginatedAsync(dt.Columns[dt.Order[0].Column].Name, dt.Order[0].Dir, dt.Start, dt.Length);
+
+                var response = new DtResponse<Publisher>()
+                {
+                    Draw = dt.Draw,
+                    RecordsTotal = recordsTotal,
+                    RecordsFiltered = recordsFiltered,
+                    Data = publishers,
+                    Error = ""
+                };
+                return Json(response);
+            }
+            catch (Exception e)
+            {
+                var response = new DtResponse<Publisher>()
+                {
+                    Draw = dt.Draw,
+                    RecordsTotal = 0,
+                    RecordsFiltered = 0,
+                    Data = null,
+                    Error = e.InnerException != null ? e.InnerException.Message : e.Message
+                };
+                return Json(response);
+            }
+        }
+
+        [HttpGet]
+        public IActionResult Index()
+        {
+            return View();
         }
 
         [HttpGet]

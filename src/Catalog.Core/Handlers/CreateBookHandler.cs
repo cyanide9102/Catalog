@@ -19,38 +19,32 @@ namespace Catalog.Core.Handlers
             var book = new Book(request.Title, request.Description, request.Price, request.Pages, request.PublishedOn);
             book.UpdatePublisher(request.Publisher);
 
-            var authorLinks = new HashSet<BookAuthor>();
             if (request.Authors != null)
             {
                 foreach (var author in request.Authors)
                 {
                     var authorLink = new BookAuthor(book.Id, author.Id);
-                    authorLinks.Add(authorLink);
+                    book.AddAuthorLink(authorLink);
                 }
             }
-            book.UpdateAuthorLinks(authorLinks);
 
-            var genreLinks = new HashSet<BookGenre>();
             if (request.Genres != null)
             {
                 foreach (var genre in request.Genres)
                 {
                     var genreLink = new BookGenre(book.Id, genre.Id);
-                    genreLinks.Add(genreLink);
+                    book.AddGenreLink(genreLink);
                 }
             }
-            book.UpdateGenreLinks(genreLinks);
 
-            var tagLinks = new HashSet<BookTag>();
             if (request.Tags != null)
             {
                 foreach (var tag in request.Tags)
                 {
                     var tagLink = new BookTag(book.Id, tag.Id);
-                    tagLinks.Add(tagLink);
+                    book.AddTagLink(tagLink);
                 }
             }
-            book.UpdateTagLinks(tagLinks);
 
             book = await _repository.AddAsync(book, cancellationToken);
             await _repository.SaveChangesAsync(cancellationToken);

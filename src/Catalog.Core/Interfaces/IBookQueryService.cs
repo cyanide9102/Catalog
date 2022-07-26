@@ -1,7 +1,11 @@
-﻿namespace Catalog.Core.Interfaces
+﻿using Catalog.Core.Entities;
+
+namespace Catalog.Core.Interfaces
 {
     public interface IBookQueryService
     {
-        Task<object> GetBookList(int draw, string? searchTerm = "", string? sortColumn = "", string? sortColumnDirection = "", int skip = 0, int pageSize = -1);
+        Task<int> GetTotalBooksCountAsync();
+        Task<int> GetFilteredBooksCountAsync(string searchValue);
+        Task<IEnumerable<Book>> GetBooksPaginatedAsync(string sortColumn, string sortDirection, int start, int length);
     }
 }

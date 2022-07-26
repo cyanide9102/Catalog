@@ -31,10 +31,11 @@ namespace Catalog.Core.Entities
         public ICollection<BookGenre> GenreLinks { get; private set; }
         public ICollection<BookTag> TagLinks { get; private set; }
 
-        public void Update(string title, string description, short? pages = null, DateTime? publishedOn = null)
+        public void Update(string title, string description, decimal price, short? pages = null, DateTime? publishedOn = null)
         {
             Title = title;
             Description = description;
+            Price = price;
             Pages = pages;
             PublishedOn = publishedOn;
             UpdatedAt = DateTime.UtcNow;
@@ -47,21 +48,39 @@ namespace Catalog.Core.Entities
             UpdatedAt = DateTime.UtcNow;
         }
 
-        public void UpdateAuthorLinks(HashSet<BookAuthor> authorLinks)
+        public void AddAuthorLink(BookAuthor authorLink)
         {
-            AuthorLinks = authorLinks;
+            AuthorLinks.Add(authorLink);
             UpdatedAt = DateTime.UtcNow;
         }
 
-        public void UpdateGenreLinks(HashSet<BookGenre> genreLinks)
+        public void RemoveAuthorLink(BookAuthor authorLink)
         {
-            GenreLinks = genreLinks;
+            AuthorLinks.Remove(authorLink);
             UpdatedAt = DateTime.UtcNow;
         }
 
-        public void UpdateTagLinks(HashSet<BookTag> tagLinks)
+        public void AddGenreLink(BookGenre genreLink)
         {
-            TagLinks = tagLinks;
+            GenreLinks.Add(genreLink);
+            UpdatedAt = DateTime.UtcNow;
+        }
+
+        public void RemoveGenreLink(BookGenre genreLink)
+        {
+            GenreLinks.Remove(genreLink);
+            UpdatedAt = DateTime.UtcNow;
+        }
+
+        public void AddTagLink(BookTag tagLink)
+        {
+            TagLinks.Add(tagLink);
+            UpdatedAt = DateTime.UtcNow;
+        }
+
+        public void RemoveTagLink(BookTag tagLink)
+        {
+            TagLinks.Remove(tagLink);
             UpdatedAt = DateTime.UtcNow;
         }
     }

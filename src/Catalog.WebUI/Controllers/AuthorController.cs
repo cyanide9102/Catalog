@@ -1,5 +1,8 @@
 ﻿using Catalog.Core.Commands;
+using Catalog.Core.Entities;
+using Catalog.Core.Interfaces;
 using Catalog.Core.Queries;
+using Catalog.WebUI.ViewModels;
 using Catalog.WebUI.ViewModels.AuthorViewModels;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -15,6 +18,45 @@ namespace Catalog.WebUI.Controllers
         public AuthorController(IMediator mediator)
         {
             _mediator = mediator;
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> GetAuthorList([FromForm] DtRequest dt, [FromServices] IAuthorQueryService authorQueryService)
+        {
+            try
+            {
+                int recordsTotal = await authorQueryService.GetTotalAuthorsCountAsync();
+                int recordsFiltered = await authorQueryService.GetFilteredAuthorsCountAsync(dt.Search.Value);
+                var authors = await authorQueryService.GetAuthorsPaginatedAsync(dt.Columns[dt.Order[0].Column].Name, dt.Order[0].Dir, dt.Start, dt.Length);
+
+                var result = new DtResponse<Author>()
+                {
+                    Draw = dt.Draw,
+                    RecordsTotal = recordsTotal,
+                    RecordsFiltered = recordsFiltered,
+                    Data = authors,
+                    Error = ""
+                };
+                return Json(result);
+            }
+            catch (Exception e)
+            {
+                var result = new DtResponse<Author>()
+                {
+                    Draw = dt.Draw,
+                    RecordsTotal = 0,
+                    RecordsFiltered = 0,
+                    Data = null,
+                    Error = e.InnerException != null ? e.InnerException.Message : e.Message
+                };
+                return Json(result);
+            }
+        }
+
+        [HttpGet]
+        public IActionResult Index()
+        {
+            return View();
         }
 
         [HttpGet]

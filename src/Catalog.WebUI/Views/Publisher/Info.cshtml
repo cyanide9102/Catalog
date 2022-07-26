@@ -16,12 +16,22 @@
             <dt class="col-sm-3">Country</dt>
             <dd class="col-sm-9">@(Model.Country ?? "")</dd>
 
-            <dt class="col-sm-3">Number of Books Published</dt>
+            <dt class="col-sm-3">Books (@Model.Books.Count)</dt>
             <dd class="col-sm-9">
-                <p class="m-0 p-0">@Model.Books.Count</p>
                 @if (Model.Books.Any())
                 {
-                    <p class="m-0 p-0"><a asp-area="" asp-controller="Book" asp-action="List" class="link-info text-dark text-decoration-none">View booklist</a></p>
+                    @foreach (var item in Model.Books.Select((value, i) => new { book = value, index = i }))
+                    {
+                        <a asp-area="" asp-controller="Book" asp-action="Info" asp-route-id="@item.book.Id" class="text-dark text-decoration-none">@item.book.Title</a>
+                        if (item.index != (Model.Books.Count() - 1))
+                        {
+                            <span>,</span>
+                        }
+                    }
+                }
+                else
+                {
+                    <p>-</p>
                 }
             </dd>
         </dl>

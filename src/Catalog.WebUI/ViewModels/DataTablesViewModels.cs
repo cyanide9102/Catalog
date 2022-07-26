@@ -4,6 +4,11 @@
 
 namespace Catalog.WebUI.ViewModels
 {
+    /*
+     **********************
+     * FOR REFERENCE ONLY *
+     **********************
+     *
     public class DtResult<T>
     {
         /// <summary>
@@ -205,4 +210,5 @@ namespace Catalog.WebUI.ViewModels
         /// </summary>
         public bool Regex { get; set; }
     }
+    */
 }

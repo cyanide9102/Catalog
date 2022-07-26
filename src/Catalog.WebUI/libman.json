@@ -9,6 +9,15 @@
     {
       "library": "datatables.net@1.12.1",
       "destination": "wwwroot/lib/datatables.net/"
+    },
+    {
+      "library": "moment.js@2.29.4",
+      "destination": "wwwroot/lib/moment.js/",
+      "files": [
+        "moment.js",
+        "moment.min.js",
+        "moment.min.js.map"
+      ]
     }
   ]
 }

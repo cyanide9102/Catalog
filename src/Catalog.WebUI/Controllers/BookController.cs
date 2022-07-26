@@ -1,6 +1,8 @@
 ﻿using Catalog.Core.Commands;
+using Catalog.Core.Entities;
 using Catalog.Core.Interfaces;
 using Catalog.Core.Queries;
+using Catalog.WebUI.ViewModels;
 using Catalog.WebUI.ViewModels.BookViewModels;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -17,18 +19,23 @@ namespace Catalog.WebUI.Controllers
         {
             _mediator = mediator;
         }
-        [HttpPost]
-        public async Task<JsonResult> GetBookList([FromServices] IBookQueryService bookQueryService)
-        {
-            var draw = Request.Form["draw"].FirstOrDefault();
-            var searchTerm = Request.Form["search[value]"].FirstOrDefault();
-            var sortColumn = Request.Form["columns[" + Request.Form["order[0][column]"].FirstOrDefault() + "][name]"].FirstOrDefault();
-            var sortColumnDirection = Request.Form["order[0][dir]"].FirstOrDefault();
-            int skip = Convert.ToInt32(Request.Form["start"].FirstOrDefault() ?? "0");
-            int pageSize = Convert.ToInt32(Request.Form["length"].FirstOrDefault() ?? "-1");
 
-            var data = await bookQueryService.GetBookList(Convert.ToInt32(draw), searchTerm, sortColumn, sortColumnDirection, skip, pageSize);
-            return Json(data);
+        [HttpPost]
+        public async Task<JsonResult> GetBookList([FromForm] DtRequest dt, [FromServices] IBookQueryService bookQueryService)
+        {
+            int recordsTotal = await bookQueryService.GetTotalBooksCountAsync();
+            int recordsFiltered = await bookQueryService.GetFilteredBooksCountAsync(dt.Search.Value);
+            var books = await bookQueryService.GetBooksPaginatedAsync(dt.Columns[dt.Order[0].Column].Name, dt.Order[0].Dir, dt.Start, dt.Length);
+
+            var result = new DtResponse<Book>()
+            {
+                Draw = dt.Draw,
+                RecordsTotal = recordsTotal,
+                RecordsFiltered = recordsFiltered,
+                Data = books,
+                Error = ""
+            };
+            return Json(result);
         }
 
         [HttpGet]
@@ -89,9 +96,37 @@ namespace Catalog.WebUI.Controllers
         [HttpGet("[controller]/[action]/{id}")]
         public async Task<IActionResult> Edit(Guid id)
         {
+            var book = await _mediator.Send(new GetBookByIdQuery(id));
+
+            var authorIds = new List<Guid>();
+            foreach (var link in book.AuthorLinks)
+            {
+                authorIds.Add(link.AuthorId);
+            }
+
+            var genreIds = new List<Guid>();
+            foreach (var link in book.GenreLinks)
+            {
+                genreIds.Add(link.GenreId);
+            }
+
+            var tagIds = new List<Guid>();
+            foreach (var link in book.TagLinks)
+            {
+                tagIds.Add(link.TagId);
+            }
             var viewModel = new BookEditViewModel()
             {
-                Id = id,
+                Id = book.Id,
+                Title = book.Title,
+                Description = book.Description,
+                Price = book.Price,
+                Pages = book.Pages,
+                PublishedOn = book.PublishedOn,
+                PublisherId = book.PublisherId ?? Guid.Empty,
+                AuthorIds = authorIds,
+                GenreIds = genreIds,
+                TagIds = tagIds,
                 Authors = await _mediator.Send(new GetAuthorsQuery()),
                 Publishers = await _mediator.Send(new GetPublishersQuery()),
                 Genres = await _mediator.Send(new GetGenresQuery()),
@@ -113,10 +148,13 @@ namespace Catalog.WebUI.Controllers
                 return View(viewModel);
             }
 
-            // TODO: Implement
-            //var author = await _mediator.Send(new EditAuthorCommand(viewModel.Id, viewModel.Name));
-            //return RedirectToAction(nameof(Info), new { author.Id });
-            return View(viewModel);
+            var publisher = viewModel.PublisherId != Guid.Empty ? await _mediator.Send(new GetPublisherByIdQuery(viewModel.PublisherId)) : null;
+            var authors = await _mediator.Send(new GetAuthorsByIdsQuery(viewModel.AuthorIds));
+            var genres = await _mediator.Send(new GetGenresByIdsQuery(viewModel.GenreIds));
+            var tags = await _mediator.Send(new GetTagsByIdsQuery(viewModel.TagIds));
+
+            var book = await _mediator.Send(new EditBookCommand(viewModel.Id, viewModel.Title, viewModel.Description, viewModel.Price, viewModel.Pages, viewModel.PublishedOn, publisher, authors, genres, tags));
+            return RedirectToAction(nameof(Info), new { book.Id });
         }
     }
 }

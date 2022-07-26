@@ -1,0 +1,30 @@
+﻿@{
+    ViewData["Title"] = "Tags";
+}
+
+<div class="mb-3 text-end">
+    <a asp-area="" asp-controller="Tag" asp-action="Create" class="btn btn-success">Create new Tag</a>
+</div>
+
+<table id="tagsTable" class="table table-striped">
+    <thead>
+        <tr>
+            <th scope="col">Name</th>
+            <th scope="col">Books in Catalog</th>
+            <th scope="col">Created At</th>
+            <th scope="col">Updated At</th>
+            <th scope="col">Actions</th>
+        </tr>
+    </thead>
+</table>
+
+@section Styles {
+    <link rel="stylesheet" href="~/lib/datatables.net-bs5/dataTables.bootstrap5.min.css" />
+}
+
+    @section Scripts {
+    <script src="~/lib/moment.js/moment.min.js"></script>
+    <script src="~/lib/datatables.net/jquery.dataTables.min.js"></script>
+    <script src="~/lib/datatables.net-bs5/dataTables.bootstrap5.min.js"></script>
+    <script src="~/js/Tag/Index.js" asp-append-version="true"></script>
+}

@@ -7,6 +7,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -66,9 +67,14 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFramework
 
 builder.Services.AddScoped(typeof(IRepository<>), typeof(EfRepository<>));
 builder.Services.AddScoped(typeof(IReadRepository<>), typeof(EfRepository<>));
+builder.Services.AddScoped(typeof(IAuthorQueryService), typeof(AuthorQueryService));
 builder.Services.AddScoped(typeof(IBookQueryService), typeof(BookQueryService));
+builder.Services.AddScoped(typeof(IGenreQueryService), typeof(GenreQueryService));
+builder.Services.AddScoped(typeof(IPublisherQueryService), typeof(PublisherQueryService));
+builder.Services.AddScoped(typeof(ITagQueryService), typeof(TagQueryService));
 
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews()
+                .AddJsonOptions(x => x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 
 builder.Services.AddMediatR(typeof(MediatorRoot).Assembly);
 

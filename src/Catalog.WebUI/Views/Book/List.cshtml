@@ -13,8 +13,7 @@
             <tr>
                 <th scope="col">Title</th>
                 <th scope="col">Price</th>
-                <th scope="col">Author(s)</th>
-                <th scope="col">Published By</th>
+                <th scope="col">Pages</th>
                 <th scope="col">Published On</th>
                 <th scope="col">Created At</th>
                 <th scope="col">Updated At</th>
@@ -25,17 +24,20 @@
             @foreach (var book in Model)
             {
                 <tr>
-                    <th scope="row">@book.Id</th>
-                    <td>@book.Title</td>
-                    <td>@(book.Pages.HasValue ? book.Pages : "")</td>
+                    <th scope="row">@book.Title</th>
                     <td>$@book.Price.ToString("0.00")</td>
+                    <td>@(book.Pages.HasValue ? book.Pages : "")</td>
                     <td>@(book.PublishedOn.HasValue ? book.PublishedOn.Value.ToLocalTime().ToString("dd MMMM, yyyy") : "")</td>
                     <td>@book.CreatedAt.ToLocalTime().ToString("dd MMMM, yyyy hh:mm tt")</td>
                     <td>@book.UpdatedAt.ToLocalTime().ToString("dd MMMM, yyyy hh:mm tt")</td>
                     <td>
                         <a asp-area="" asp-controller="Book" asp-action="Info" asp-route-id="@book.Id" class="btn btn-sm btn-info">View</a>
                         <a asp-area="" asp-controller="Book" asp-action="Edit" asp-route-id="@book.Id" class="btn btn-sm btn-secondary">Edit</a>
-                        <a asp-area="" asp-controller="Book" asp-action="Info" asp-route-id="@book.Id" class="btn btn-sm btn-danger">Delete</a>
+                        <form asp-area="" asp-controller="Book" asp-action="Delete" method="post" class="d-inline">
+                            <input type="hidden" name="Id" value="@book.Id" />
+                            <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                            @Html.AntiForgeryToken()
+                        </form>
                     </td>
                 </tr>
             }

@@ -2,13 +2,19 @@
 
 $(document).ready(function () {
     $("#booksTable").DataTable({
+        paging: true,
+        processing: true,
+        serverSide: true,
+        search: {
+            return: true
+        },
+        searching: {
+            regex: false
+        },
         ajax: {
             url: "/Book/GetBookList",
             type: "POST",
         },
-        processing: true,
-        serverSide: true,
-        filter: true,
         columns: [
             {
                 data: "title",
@@ -80,7 +86,10 @@ $(document).ready(function () {
                 render: function (data, _type, _row, _meta) {
                     return `<a href="/Book/Info/${data}" class="btn btn-sm btn-info">View</a>
                             <a href="/Book/Edit/${data}" class="btn btn-sm btn-secondary">Edit</a>
-                            <a href="/Book/Info/${data}" class="btn btn-sm btn-danger">Delete</a>`;
+                            <form asp-area="" asp-controller="Book" asp-action="Delete" method="post" class="d-inline">
+                                <input type="hidden" name="Id" value="${data}" />
+                                <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                            </form>`;
                 }
             },
         ]

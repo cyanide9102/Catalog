@@ -22,7 +22,7 @@
                 {
                     @foreach (var item in Model.Books.Select((value, i) => new { book = value, index = i }))
                     {
-                        <a asp-area="" asp-controller="Book" asp-action="Info" asp-route-id="@item.book.Id" class="text-dark text-decoration-none">@item.book.Title</a>
+                        <a asp-area="" asp-controller="Book" asp-action="Info" asp-route-id="@item.book.Id" class="text-dark">@item.book.Title</a>
                         if (item.index != (Model.Books.Count() - 1))
                         {
                             <span>,</span>

@@ -24,7 +24,7 @@
                 @if (Model.Publisher != null)
                 {
                     <p class="m-0 p-0">
-                        <a asp-area="" asp-controller="Publisher" asp-action="Info" asp-route-id="@Model.Publisher.Id" class="text-dark text-decoration-none">@Model.Publisher.Name</a>
+                        <a asp-area="" asp-controller="Publisher" asp-action="Info" asp-route-id="@Model.Publisher.Id" class="text-dark">@Model.Publisher.Name</a>
                     </p>
                 }
                 else
@@ -38,7 +38,7 @@
                 <p class="m-0 p-0">
                     @foreach (var item in Model.AuthorLinks.Select((value, i) => new { link = value, index = i }))
                     {
-                        <a asp-area="" asp-controller="Author" asp-action="Info" asp-route-id="@item.link.Author.Id" class="text-dark text-decoration-none">@item.link.Author.Name</a>
+                        <a asp-area="" asp-controller="Author" asp-action="Info" asp-route-id="@item.link.Author.Id" class="text-dark">@item.link.Author.Name</a>
                         if (item.index != (Model.AuthorLinks.Count() - 1))
                         {
                             <span>,</span>
@@ -52,7 +52,7 @@
                 <p class="m-0 p-0">
                     @foreach (var item in Model.GenreLinks.Select((value, i) => new { link = value, index = i }))
                     {
-                        <a asp-area="" asp-controller="Genre" asp-action="Info" asp-route-id="@item.link.Genre.Id" class="text-dark text-decoration-none">@item.link.Genre.Name</a>
+                        <a asp-area="" asp-controller="Genre" asp-action="Info" asp-route-id="@item.link.Genre.Id" class="text-dark">@item.link.Genre.Name</a>
                         if (item.index != (Model.GenreLinks.Count() - 1))
                         {
                             <span>, </span>
@@ -66,7 +66,7 @@
                 <p class="m-0 p-0">
                     @foreach (var item in Model.TagLinks.Select((value, i) => new { link = value, index = i }))
                     {
-                        <a asp-area="" asp-controller="Tag" asp-action="Info" asp-route-id="@item.link.Tag.Id" class="text-dark text-decoration-none">@item.link.Tag.Name</a>
+                        <a asp-area="" asp-controller="Tag" asp-action="Info" asp-route-id="@item.link.Tag.Id" class="text-dark">@item.link.Tag.Name</a>
                         if (item.index != (Model.TagLinks.Count() - 1))
                         {
                             <span>, </span>

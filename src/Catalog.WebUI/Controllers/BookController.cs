@@ -85,9 +85,9 @@ namespace Catalog.WebUI.Controllers
             }
 
             var publisher = viewModel.PublisherId != Guid.Empty ? await _mediator.Send(new GetPublisherByIdQuery(viewModel.PublisherId)) : null;
-            var authors = await _mediator.Send(new GetAuthorsByIdsQuery(viewModel.AuthorIds));
-            var genres = await _mediator.Send(new GetGenresByIdsQuery(viewModel.GenreIds));
-            var tags = await _mediator.Send(new GetTagsByIdsQuery(viewModel.TagIds));
+            var authors = viewModel.AuthorIds != null && viewModel.AuthorIds.Any() ? await _mediator.Send(new GetAuthorsByIdsQuery(viewModel.AuthorIds)) : null;
+            var genres = viewModel.GenreIds != null && viewModel.GenreIds.Any() ? await _mediator.Send(new GetGenresByIdsQuery(viewModel.GenreIds)) : null;
+            var tags = viewModel.TagIds != null && viewModel.TagIds.Any() ? await _mediator.Send(new GetTagsByIdsQuery(viewModel.TagIds)) : null;
 
             var book = await _mediator.Send(new CreateBookCommand(viewModel.Title, viewModel.Description, viewModel.Price, viewModel.Pages, viewModel.PublishedOn, publisher, authors, genres, tags));
             return RedirectToAction(nameof(Info), new { book.Id });
@@ -149,12 +149,20 @@ namespace Catalog.WebUI.Controllers
             }
 
             var publisher = viewModel.PublisherId != Guid.Empty ? await _mediator.Send(new GetPublisherByIdQuery(viewModel.PublisherId)) : null;
-            var authors = await _mediator.Send(new GetAuthorsByIdsQuery(viewModel.AuthorIds));
-            var genres = await _mediator.Send(new GetGenresByIdsQuery(viewModel.GenreIds));
-            var tags = await _mediator.Send(new GetTagsByIdsQuery(viewModel.TagIds));
+            var authors = viewModel.AuthorIds != null && viewModel.AuthorIds.Any() ? await _mediator.Send(new GetAuthorsByIdsQuery(viewModel.AuthorIds)) : null;
+            var genres = viewModel.GenreIds != null && viewModel.GenreIds.Any() ? await _mediator.Send(new GetGenresByIdsQuery(viewModel.GenreIds)) : null;
+            var tags = viewModel.TagIds != null && viewModel.TagIds.Any() ? await _mediator.Send(new GetTagsByIdsQuery(viewModel.TagIds)) : null;
 
             var book = await _mediator.Send(new EditBookCommand(viewModel.Id, viewModel.Title, viewModel.Description, viewModel.Price, viewModel.Pages, viewModel.PublishedOn, publisher, authors, genres, tags));
             return RedirectToAction(nameof(Info), new { book.Id });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Delete([FromForm] Guid id)
+        {
+            await _mediator.Send(new DeleteBookCommand(id));
+            return RedirectToAction(nameof(Index));
         }
     }
 }

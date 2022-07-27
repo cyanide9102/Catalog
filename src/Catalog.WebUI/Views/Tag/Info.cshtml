@@ -19,7 +19,7 @@
                 {
                     @foreach (var item in Model.BookLinks.Select((value, i) => new { link = value, index = i }))
                     {
-                        <a asp-area="" asp-controller="Book" asp-action="Info" asp-route-id="@item.link.Book.Id" class="text-dark text-decoration-none">@item.link.Book.Title</a>
+                        <a asp-area="" asp-controller="Book" asp-action="Info" asp-route-id="@item.link.Book.Id" class="text-dark">@item.link.Book.Title</a>
                         if (item.index != (Model.BookLinks.Count() - 1))
                         {
                             <span>,</span>

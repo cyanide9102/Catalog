@@ -2,13 +2,19 @@
 
 $(document).ready(function () {
     $("#authorsTable").DataTable({
+        paging: true,
+        processing: true,
+        serverSide: true,
+        search: {
+            return: true
+        },
+        searching: {
+            regex: false
+        },
         ajax: {
             url: "/Author/GetAuthorList",
             type: "POST",
         },
-        processing: true,
-        serverSide: true,
-        filter: true,
         columns: [
             {
                 data: "name",
@@ -53,8 +59,8 @@ $(document).ready(function () {
                 className: "text-end",
                 render: function (data, _type, _row, _meta) {
                     return `<a href="/Author/Info/${data}" class="btn btn-sm btn-info">View</a>
-                            <a href="/Author/Edit/${data}" class="btn btn-sm btn-secondary">Edit</a>
-                            <a href="/Author/Info/${data}" class="btn btn-sm btn-danger">Delete</a>`;
+                            <a href="/Author/Edit/${data}" class="btn btn-sm btn-secondary">Edit</a>`;
+                            //<a href="/Author/Info/${data}" class="btn btn-sm btn-danger">Delete</a>`;
                 }
             },
         ]

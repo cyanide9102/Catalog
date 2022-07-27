@@ -2,10 +2,12 @@
 
 $(document).ready(function () {
     $("#publishersTable").DataTable({
+        paging: true,
         processing: true,
         serverSide: true,
-        filter: true,
-        paging: true,
+        search: {
+            return: true
+        },
         searching: {
             regex: false
         },
@@ -61,8 +63,8 @@ $(document).ready(function () {
                 className: "text-end",
                 render: function (data, _type, _row, _meta) {
                     return `<a href="/Publisher/Info/${data}" class="btn btn-sm btn-info">View</a>
-                            <a href="/Publisher/Edit/${data}" class="btn btn-sm btn-secondary">Edit</a>
-                            <a href="/Publisher/Info/${data}" class="btn btn-sm btn-danger">Delete</a>`;
+                            <a href="/Publisher/Edit/${data}" class="btn btn-sm btn-secondary">Edit</a>`;
+                            //<a href="/Publisher/Info/${data}" class="btn btn-sm btn-danger">Delete</a>`;
                 }
             },
         ]

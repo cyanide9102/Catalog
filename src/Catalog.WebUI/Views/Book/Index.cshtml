@@ -2,8 +2,29 @@
     ViewData["Title"] = "Books";
 }
 
-<div class="mb-3 text-end">
+<div class="mb-3">
     <a asp-area="" asp-controller="Book" asp-action="Create" class="btn btn-success">Create new Book</a>
+</div>
+<div class="row mb-3">
+    <div class="col-lg-6 col-md-8 col-sm-10">
+        <div class="clearfix">
+            <form id="booksTableFilters" autocomplete="off">
+                <div class="form-floating mb-3">
+                    <input type="text" class="form-control" id="searchByTitle" placeholder="Title" />
+                    <label for="searchByTitle">Search by book title..</label>
+                </div>
+                <div class="form-floating mb-3">
+                    <input type="number" class="form-control" id="searchByPrice" step=".01" placeholder="Price" />
+                    <label for="searchByPrice">Search by book price..</label>
+                </div>
+                <div class="form-floating mb-3">
+                    <input type="text" class="form-control" id="searchByPublisher" placeholder="Publisher" />
+                    <label for="searchByPublisher">Search by publisher name..</label>
+                </div>
+                <button type="submit" class="btn btn-primary float-end">Apply Filters</button>
+            </form>
+        </div>
+    </div>
 </div>
 
 <table id="booksTable" class="table table-striped">

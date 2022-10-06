@@ -1,5 +1,7 @@
 ﻿using Catalog.Core.Commands;
+using Catalog.Core.Constants;
 using Catalog.Core.Entities;
+using Catalog.Core.Extensions;
 using Catalog.Core.Interfaces;
 using Catalog.Core.Queries;
 using Catalog.WebUI.ViewModels;
@@ -7,6 +9,7 @@ using Catalog.WebUI.ViewModels.BookViewModels;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Catalog.WebUI.Controllers
 {
@@ -14,28 +17,75 @@ namespace Catalog.WebUI.Controllers
     public class BookController : Controller
     {
         private readonly IMediator _mediator;
+        private IReadRepository<Book> _bookRepository;
 
-        public BookController(IMediator mediator)
+        public BookController(IMediator mediator, IReadRepository<Book> bookRepository)
         {
             _mediator = mediator;
+            _bookRepository = bookRepository;
         }
 
         [HttpPost]
-        public async Task<JsonResult> GetBookList([FromForm] DtRequest dt, [FromServices] IBookQueryService bookQueryService)
+        public IActionResult GetBookList([FromForm] DtRequest dt)
         {
-            int recordsTotal = await bookQueryService.GetTotalBooksCountAsync();
-            int recordsFiltered = await bookQueryService.GetFilteredBooksCountAsync(dt.Search.Value);
-            var books = await bookQueryService.GetBooksPaginatedAsync(dt.Columns[dt.Order[0].Column].Name, dt.Order[0].Dir, dt.Start, dt.Length);
-
-            var result = new DtResponse<Book>()
+            try
             {
-                Draw = dt.Draw,
-                RecordsTotal = recordsTotal,
-                RecordsFiltered = recordsFiltered,
-                Data = books,
-                Error = ""
-            };
-            return Json(result);
+                var query = _bookRepository.Get();
+                query = query.Include(b => b.Publisher)
+                             .Include(b => b.AuthorLinks)
+                             .ThenInclude(l => l.Author)
+                             .Include(b => b.GenreLinks)
+                             .ThenInclude(l => l.Genre)
+                             .Include(b => b.TagLinks)
+                             .ThenInclude(l => l.Tag);
+
+                int recordsTotal = query.Count();
+
+                foreach (var column in dt.Columns)
+                {
+                    if (!string.IsNullOrWhiteSpace(column.Search.Value))
+                    {
+                        bool valueIsNumeric = decimal.TryParse(column.Search.Value, out decimal numericValue);
+                        if (valueIsNumeric)
+                        {
+                            query = query.Where(column.Name, numericValue, NumberCondition.Equal);
+                        }
+                        else
+                        {
+                            query = query.Where(column.Name, column.Search.Value, StringCondition.Contains);
+                        }
+                    }
+                }
+
+                if (!string.IsNullOrEmpty(dt.Search.Value))
+                {
+                    query = query.Where(dt.Search.Value, StringCondition.Contains);
+                }
+
+                int recordsFiltered = query.Count();
+
+                if (dt.Order.Length > 0)
+                {
+                    query = query.OrderBy(dt.Columns[dt.Order[0].Column].Name, dt.Order[0].Dir == "asc");
+                }
+
+                query = query.Skip(dt.Start).Take(dt.Length);
+
+                var books = query.ToList();
+                var result = new DtResponse<Book>()
+                {
+                    Draw = dt.Draw,
+                    RecordsTotal = recordsTotal,
+                    RecordsFiltered = recordsFiltered,
+                    Data = books,
+                    Error = ""
+                };
+                return Ok(result);
+            }
+            catch (Exception e)
+            {
+                return Problem(e.InnerException != null ? e.InnerException.Message : e.Message);
+            }
         }
 
         [HttpGet]

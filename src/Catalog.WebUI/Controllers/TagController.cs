@@ -1,5 +1,6 @@
 ﻿using Catalog.Core.Commands;
 using Catalog.Core.Entities;
+using Catalog.Core.Extensions;
 using Catalog.Core.Interfaces;
 using Catalog.Core.Queries;
 using Catalog.WebUI.ViewModels;
@@ -7,6 +8,7 @@ using Catalog.WebUI.ViewModels.TagViewModels;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Catalog.WebUI.Controllers
 {
@@ -14,20 +16,41 @@ namespace Catalog.WebUI.Controllers
     public class TagController : Controller
     {
         private readonly IMediator _mediator;
+        private readonly IReadRepository<Tag> _tagRepository;
 
-        public TagController(IMediator mediator)
+        public TagController(IMediator mediator, IReadRepository<Tag> tagRepository)
         {
             _mediator = mediator;
+            _tagRepository = tagRepository;
         }
 
         [HttpPost]
-        public async Task<JsonResult> GetTagList([FromForm] DtRequest dt, [FromServices] ITagQueryService tagQueryService)
+        public IActionResult GetTagList([FromForm] DtRequest dt)
         {
             try
             {
-                int recordsTotal = await tagQueryService.GetTotalTagsCountAsync();
-                int recordsFiltered = await tagQueryService.GetFilteredTagsCountAsync(dt.Search.Value);
-                var tags = await tagQueryService.GetTagsPaginatedAsync(dt.Columns[dt.Order[0].Column].Name, dt.Order[0].Dir, dt.Start, dt.Length);
+                var query = _tagRepository.Get();
+                int recordsTotal = query.Count();
+
+                if (!string.IsNullOrEmpty(dt.Search.Value))
+                {
+                    query = query.Where(dt.Search.Value, Core.Constants.StringCondition.Contains);
+                }
+
+
+                int recordsFiltered = query.Count();
+
+                if (dt.Order.Length > 0)
+                {
+                    query = query.OrderBy(dt.Columns[dt.Order[0].Column].Name, dt.Order[0].Dir == "asc");
+
+                }
+
+                query = query.Skip(dt.Start).Take(dt.Length);
+                query = query.Include(b => b.BookLinks)
+                             .ThenInclude(l => l.Book);
+
+                var tags = query.ToList();
 
                 var result = new DtResponse<Tag>()
                 {
@@ -37,19 +60,11 @@ namespace Catalog.WebUI.Controllers
                     Data = tags,
                     Error = ""
                 };
-                return Json(result);
+                return Ok(result);
             }
             catch (Exception e)
             {
-                var result = new DtResponse<Tag>()
-                {
-                    Draw = dt.Draw,
-                    RecordsTotal = 0,
-                    RecordsFiltered = 0,
-                    Data = null,
-                    Error = e.InnerException != null ? e.InnerException.Message : e.Message
-                };
-                return Json(result);
+                return Problem(e.Message);
             }
         }
 

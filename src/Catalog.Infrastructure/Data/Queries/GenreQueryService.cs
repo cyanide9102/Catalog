@@ -50,7 +50,7 @@ namespace Catalog.Infrastructure.Data.Queries
         {
             if (!string.IsNullOrEmpty(column) && !string.IsNullOrEmpty(direction))
             {
-                Genres = Genres.OrderBy(column, direction);
+                Genres = Genres.OrderBy(column, direction == "asc");
             }
         }
 

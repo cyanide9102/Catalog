@@ -51,7 +51,7 @@ namespace Catalog.Infrastructure.Data.Queries
         {
             if (!string.IsNullOrEmpty(column) && !string.IsNullOrEmpty(direction))
             {
-                Authors = Authors.OrderBy(column, direction);
+                Authors = Authors.OrderBy(column, direction == "asc");
             }
         }
 

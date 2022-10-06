@@ -50,7 +50,7 @@ namespace Catalog.Infrastructure.Data.Queries
         {
             if (!string.IsNullOrEmpty(column) && !string.IsNullOrEmpty(direction))
             {
-                Tags = Tags.OrderBy(column, direction);
+                Tags = Tags.OrderBy(column, direction == "asc");
             }
         }
 
